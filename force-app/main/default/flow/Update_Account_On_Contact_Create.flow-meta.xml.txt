@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Flow xmlns="http://soap.sforce.com/2006/04/metadata">
+    <apiVersion>59.0</apiVersion>
+    <description>Updates Account when a new Contact is created</description>
+    <interviewLabel>Update Account on Contact Create {!$Flow.CurrentDateTime}</interviewLabel>
+    <label>Update Account on Contact Create</label>
+    <processType>AutoLaunchedFlow</processType>
+    <status>Active</status>
+
+    <!-- Start Element -->
+    <start>
+        <object>Contact</object>
+        <recordTriggerType>Create</recordTriggerType>
+        <triggerType>RecordAfterSave</triggerType>
+        <filters>
+            <field>AccountId</field>
+            <operator>NotEqualTo</operator>
+            <value>
+                <stringValue></stringValue>
+            </value>
+        </filters>
+    </start>
+
+    <!-- Get Account -->
+    <recordLookups>
+        <name>Get_Account</name>
+        <label>Get Account</label>
+        <object>Account</object>
+        <filters>
+            <field>Id</field>
+            <operator>EqualTo</operator>
+            <value>
+                <elementReference>$Record.AccountId</elementReference>
+            </value>
+        </filters>
+        <getFirstRecordOnly>true</getFirstRecordOnly>
+        <storeOutputAutomatically>true</storeOutputAutomatically>
+    </recordLookups>
+
+    <!-- Update Account -->
+    <recordUpdates>
+        <name>Update_Account</name>
+        <label>Update Account</label>
+        <inputReference>Get_Account</inputReference>
+        <fields>
+            <field>Has_Active_Contacts__c</field>
+            <value>
+                <booleanValue>true</booleanValue>
+            </value>
+        </fields>
+    </recordUpdates>
+
+    <!-- Flow Connections -->
+    <connectors>
+        <sourceReference>start</sourceReference>
+        <targetReference>Get_Account</targetReference>
+    </connectors>
+
+    <connectors>
+        <sourceReference>Get_Account</sourceReference>
+        <targetReference>Update_Account</targetReference>
+    </connectors>
+
+</Flow>
