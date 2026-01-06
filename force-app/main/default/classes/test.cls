@@ -1,6 +1,5 @@
-public with sharing class StarWarsController {
-    public StarWarsController() {
+public with sharing class test {
+    public test() {
 
     }
 }
-
